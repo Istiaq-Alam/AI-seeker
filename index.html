@@ -1,83 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IUPC Contest Setup</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IUPC Setup</title>
 
-    <style>
-        body {
-            background-color: #0d1117;
-            color: #00ff9c;
-            font-family: "Courier New", monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+<style>
+    body {
+        background-color: #0d1117;
+        color: #00ff9c;
+        font-family: "Courier New", monospace;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
 
-        .container {
-            text-align: center;
-            border: 1px solid #00ff9c;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px #00ff9c33;
-        }
+    .container {
+        text-align: center;
+        border: 1px solid #00ff9c;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px #00ff9c33;
+        width: 420px;
+    }
 
-        h1 {
-            margin-bottom: 10px;
-        }
+    h1 {
+        margin-bottom: 10px;
+    }
 
-        p {
-            color: #9be9a8;
-            margin-bottom: 30px;
-        }
+    p {
+        color: #9be9a8;
+        margin-bottom: 25px;
+    }
 
-        a.download-btn {
-            text-decoration: none;
-            background: #00ff9c;
-            color: #0d1117;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
+    a.download-btn {
+        text-decoration: none;
+        background: #00ff9c;
+        color: #0d1117;
+        padding: 12px 25px;
+        border-radius: 5px;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 25px;
+    }
 
-        a.download-btn:hover {
-            background: #00cc7a;
-        }
+    .cmd-box {
+        background: #161b22;
+        border: 1px solid #00ff9c55;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-        .cmd {
-            margin-top: 25px;
-            font-size: 14px;
-            color: #8b949e;
-        }
-    </style>
+    code {
+        color: #00ff9c;
+        font-size: 13px;
+        text-align: left;
+    }
+
+    button {
+        background: #00ff9c;
+        color: #0d1117;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    button:hover {
+        background: #00cc7a;
+    }
+
+</style>
 </head>
+
 <body>
 
 <div class="container">
     <h1>IUPC Setup Script</h1>
-    <p>Download and run the contest user setup script for NixOS</p>
+    <p>Download and run the contest setup</p>
 
     <!-- Download Button -->
     <a class="download-btn" href="create-contest-user.sh" download>
         ⬇ Download Script
     </a>
 
-    <!-- Optional quick command -->
-    <div class="cmd">
-        <p>Or run directly:</p>
-        <code>
-            wget https://iupc-setup.vercel.app/create-contest-user.sh
-            <br>
-            chmod +x create-contest-user.sh
-            <br>
-            ./create-contest-user.sh
-        </code>
+    <!-- Commands -->
+    <div class="cmd-box">
+        <code id="cmd1">wget https://iupc-setup.vercel.app/create-contest-user.sh</code>
+        <button onclick="copyText('cmd1')">Copy</button>
     </div>
+
+    <div class="cmd-box">
+        <code id="cmd2">chmod +x create-contest-user.sh</code>
+        <button onclick="copyText('cmd2')">Copy</button>
+    </div>
+
+    <div class="cmd-box">
+        <code id="cmd3">./create-contest-user.sh</code>
+        <button onclick="copyText('cmd3')">Copy</button>
+    </div>
+
+    <!-- One-liner -->
+    <div class="cmd-box">
+        <code id="cmd4">curl -sSL https://iupc-setup.vercel.app/create-contest-user.sh | bash</code>
+        <button onclick="copyText('cmd4')">Copy</button>
+    </div>
+
 </div>
+
+<script>
+function copyText(id) {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Copied: " + text);
+    });
+}
+</script>
 
 </body>
 </html>
+
