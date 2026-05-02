@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IUPC Contest Setup</title>
+
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #00ff9c;
+            font-family: "Courier New", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            border: 1px solid #00ff9c;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px #00ff9c33;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #9be9a8;
+            margin-bottom: 30px;
+        }
+
+        a.download-btn {
+            text-decoration: none;
+            background: #00ff9c;
+            color: #0d1117;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        a.download-btn:hover {
+            background: #00cc7a;
+        }
+
+        .cmd {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #8b949e;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>IUPC Setup Script</h1>
+    <p>Download and run the contest user setup script for NixOS</p>
+
+    <!-- Download Button -->
+    <a class="download-btn" href="create-contest-user.sh" download>
+        ⬇ Download Script
+    </a>
+
+    <!-- Optional quick command -->
+    <div class="cmd">
+        <p>Or run directly:</p>
+        <code>
+            wget https://Istiaq-Alam.github.io/iupc-setup/create-contest-user.sh
+            <br>
+            chmod +x create-contest-user.sh
+            <br>
+            ./create-contest-user.sh
+        </code>
+    </div>
+</div>
+
+</body>
+</html>
