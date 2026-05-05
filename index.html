@@ -1,133 +1,943 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Claude Code Installation</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<meta
+  name="description"
+  content="A simple, offline-friendly Claude Code setup script for Linux machines."
+/>
+<title>Claude Code Setup Script</title>
 
 <style>
-    body {
-        background-color: #0d1117;
-        color: #00ff9c;
-        font-family: "Courier New", monospace;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
+  :root {
+    --bg: #0a0c10;
+    --surface: rgba(255, 255, 255, 0.05);
+    --surface-2: rgba(255, 255, 255, 0.08);
+    --border: rgba(255, 255, 255, 0.12);
+    --text: rgba(255, 255, 255, 0.92);
+    --muted: rgba(255, 255, 255, 0.68);
+    --faint: rgba(255, 255, 255, 0.52);
+    --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --accent: #f59e0b;
+    --accent-2: #a78bfa;
+    --accent-3: #22c55e;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+      Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: radial-gradient(1200px 800px at 20% 10%, rgba(167, 139, 250, 0.18), transparent 60%),
+      radial-gradient(900px 700px at 80% 20%, rgba(245, 158, 11, 0.14), transparent 55%),
+      radial-gradient(1000px 700px at 50% 100%, rgba(34, 197, 94, 0.10), transparent 58%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.55;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .wrap {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    background: rgba(10, 12, 16, 0.55);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .topbar__inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+
+  .brand__mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    background: radial-gradient(circle at 20% 20%, rgba(245, 158, 11, 0.9), rgba(167, 139, 250, 0.9));
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset, 0 12px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .nav {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .menu-btn {
+    display: none;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+  }
+
+  .menu-btn:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.20);
+    transform: translateY(-1px);
+  }
+
+  .nav a {
+    color: var(--muted);
+    font-size: 14px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    transition: background 120ms ease, color 120ms ease;
+  }
+
+  .nav a:hover,
+  .nav a:focus-visible {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    outline: none;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 34px 20px 60px;
+    width: 100%;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 22px;
+    align-items: start;
+    padding-top: 12px;
+  }
+
+  .hero h1 {
+    margin: 0 0 10px;
+    font-size: clamp(34px, 4.2vw, 52px);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+
+  .hero p {
+    margin: 0 0 18px;
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 60ch;
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .kicker strong {
+    color: var(--text);
+    font-weight: 650;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .btn {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    font-weight: 650;
+    letter-spacing: 0.1px;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.20);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  .btn.primary {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(167, 139, 250, 0.95));
+    border-color: rgba(255, 255, 255, 0.18);
+    color: rgba(10, 12, 16, 0.92);
+  }
+
+  .btn.primary:hover {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 1), rgba(167, 139, 250, 1));
+  }
+
+  .btn.ghost {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .panel {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.04));
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .terminal {
+    padding: 14px 14px 12px;
+    overflow: hidden;
+  }
+
+  .terminal__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .dots {
+    display: inline-flex;
+    gap: 7px;
+    align-items: center;
+  }
+
+  .dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  .dots span:nth-child(1) {
+    background: rgba(239, 68, 68, 0.85);
+  }
+  .dots span:nth-child(2) {
+    background: rgba(245, 158, 11, 0.85);
+  }
+  .dots span:nth-child(3) {
+    background: rgba(34, 197, 94, 0.85);
+  }
+
+  .terminal__label {
+    color: var(--faint);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  pre {
+    margin: 12px 0 0;
+    padding: 16px 14px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    overflow: auto;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.90);
+  }
+
+  .section {
+    margin-top: 38px;
+  }
+
+  .section h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+
+  .section p {
+    margin: 0 0 16px;
+    color: var(--muted);
+  }
+
+  .grid {
+    display: grid;
+    gap: 14px;
+  }
+
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+  }
+
+  .card:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .step__num {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    margin-bottom: 10px;
+  }
+
+  .card h3 {
+    margin: 0 0 6px;
+    font-size: 15px;
+  }
+
+  .card p {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .cmd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 12px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+  }
+
+  .cmd code {
+    display: block;
+    overflow: auto;
+    white-space: nowrap;
+    padding-bottom: 2px;
+  }
+
+  .icon-btn {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--text);
+    padding: 9px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+  }
+
+  .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.20);
+    transform: translateY(-1px);
+  }
+
+  .icon-btn:active {
+    transform: translateY(0);
+  }
+
+  .seg {
+    display: inline-flex;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.04);
+    margin-top: 10px;
+  }
+
+  .seg button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 650;
+    font-size: 13px;
+    transition: background 120ms ease, color 120ms ease;
+  }
+
+  .seg button[aria-pressed="true"] {
+    background: rgba(255, 255, 255, 0.10);
+    color: var(--text);
+  }
+
+  .faq {
+    display: grid;
+    gap: 10px;
+  }
+
+  details {
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 12px 14px;
+  }
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-weight: 700;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  details p {
+    color: var(--muted);
+    margin: 10px 0 4px;
+    font-size: 14px;
+  }
+
+  .chev {
+    color: var(--muted);
+    transition: transform 140ms ease;
+  }
+
+  details[open] .chev {
+    transform: rotate(180deg);
+  }
+
+  footer {
+    margin-top: 40px;
+    color: var(--faint);
+    font-size: 13px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    background: rgba(10, 12, 16, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 10px 12px;
+    border-radius: 999px;
+    color: var(--text);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  .toast[data-show="true"] {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
+  }
+
+  .toast__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
+  }
+
+  @media (max-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr;
     }
 
-    .container {
-        text-align: center;
-        border: 1px solid #00ff9c;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 0 20px #00ff9c33;
-        width: 420px;
+    .steps {
+      grid-template-columns: 1fr;
     }
 
-    h1 {
-        margin-bottom: 10px;
+    .nav {
+      display: none;
+      width: 100%;
+      padding: 10px 12px 14px;
+      margin: 8px 0 0;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      justify-content: flex-start;
+      gap: 10px;
     }
 
-    p {
-        color: #9be9a8;
-        margin-bottom: 25px;
+    .menu-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    a.download-btn {
-        text-decoration: none;
-        background: #00ff9c;
-        color: #0d1117;
-        padding: 12px 25px;
-        border-radius: 5px;
-        font-weight: bold;
-        display: inline-block;
-        margin-bottom: 25px;
+    .topbar[data-menu="open"] .nav {
+      display: flex;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .topbar__inner {
+      flex-wrap: wrap;
     }
 
-    .cmd-box {
-        background: #161b22;
-        border: 1px solid #00ff9c55;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 6px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .actions {
+      flex-direction: column;
+      align-items: stretch;
     }
 
-    code {
-        color: #00ff9c;
-        font-size: 13px;
-        text-align: left;
+    .btn {
+      width: 100%;
+      justify-content: center;
     }
 
-    button {
-        background: #00ff9c;
-        color: #0d1117;
-        border: none;
-        padding: 5px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
+    .cmd {
+      flex-direction: column;
+      align-items: stretch;
     }
 
-    button:hover {
-        background: #00cc7a;
+    .icon-btn {
+      justify-content: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
     }
 
+  .btn,
+  .card,
+  .icon-btn,
+  .menu-btn,
+  .toast,
+  .chev {
+    transition: none !important;
+  }
+  }
 </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <header class="topbar" data-menu="closed">
+      <div class="topbar__inner">
+        <a class="brand" href="#top">
+          <span class="brand__mark" aria-hidden="true"></span>
+          <span>Claude Code Setup</span>
+        </a>
+        <button class="menu-btn" type="button" id="menuBtn" aria-expanded="false" aria-controls="topNav">
+          Menu <span aria-hidden="true">☰</span>
+        </button>
+        <nav class="nav" id="topNav" aria-label="Page">
+          <a href="#install">Install</a>
+          <a href="#commands">Commands</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+      </div>
+    </header>
 
-<div class="container">
-    <h1>Claude Code Setup Script</h1>
-    <p>Download and run the Script</p>
+    <main id="top">
+      <section class="hero" aria-label="Intro">
+        <div>
+          <div class="kicker">
+            <strong>Offline-friendly</strong>
+            <span>Linux setup script</span>
+          </div>
+          <h1>Install Claude Code in minutes.</h1>
+          <p>
+            Download the script, run 3 commands, and you’re done. Copy buttons,
+            a clean “Claude Code” style dark theme, and a layout that looks good
+            on both desktop and mobile.
+          </p>
 
-    <!-- Download Button -->
-    <a class="download-btn" href="ClaudeCode-Installation.sh" download>
-        ⬇ Download Claude-Code
-    </a>
+          <div class="actions">
+            <a class="btn primary" href="ClaudeCode-Installation.sh" download>
+              Download script
+              <span aria-hidden="true">⬇</span>
+            </a>
+            <button class="btn ghost" type="button" id="copyPrimary">
+              Copy one-liner
+              <span aria-hidden="true">⎘</span>
+            </button>
+            <a class="btn" href="#install">View steps</a>
+          </div>
+        </div>
 
-    <!-- Commands -->
-    <p>Step 1 : Download From Terminal</p>
-    <div class="cmd-box">
-        <code id="cmd1">wget https://iupc-setup.vercel.app/ClaudeCode-Installation.sh</code>
-        <button onclick="copyText('cmd1')">Copy</button>
-    </div>
-    
-    <p>Step 2 : Give execute permission</p>
-    <div class="cmd-box">
-        <code id="cmd2">chmod +x ClaudeCode-Installation.sh</code>
-        <button onclick="copyText('cmd2')">Copy</button>
-    </div>
+        <aside class="panel terminal" aria-label="Terminal preview">
+          <div class="terminal__top">
+            <div class="dots" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="terminal__label">Quick install</div>
+            <button class="icon-btn" type="button" data-copy="#oneLiner">
+              Copy
+              <span aria-hidden="true">⎘</span>
+            </button>
+          </div>
+          <pre><code id="oneLiner">curl -sSL https://iupc-setup.vercel.app/ClaudeCode-Installation.sh | bash</code></pre>
+        </aside>
+      </section>
 
-    <p>Step 3 : Start installation</p>
-    <div class="cmd-box">
-        <code id="cmd3">./ClaudeCode-Installation.sh</code>
-        <button onclick="copyText('cmd3')">Copy</button>
-    </div>
+      <section class="section" id="install" aria-label="Install steps">
+        <h2>Install in 3 steps</h2>
+        <p>Each command has a copy button. Paste into your terminal.</p>
 
-    <!-- One-liner -->
-    <p>You can Directly paste it into terminal. It will automatically download and install required files</p>
-    <div class="cmd-box">
-        <code id="cmd4">curl -sSL https://iupc-setup.vercel.app/ClaudeCode-Installation.sh | bash</code>
-        <button onclick="copyText('cmd4')">Copy</button>
-    </div> 
+        <div class="grid steps">
+          <div class="card">
+            <div class="step__num">1</div>
+            <h3>Download</h3>
+            <p>Fetch the installer script to your machine.</p>
+            <div class="cmd">
+              <code id="cmd-download">wget https://iupc-setup.vercel.app/ClaudeCode-Installation.sh</code>
+              <button class="icon-btn" type="button" data-copy="#cmd-download">
+                Copy <span aria-hidden="true">⎘</span>
+              </button>
+            </div>
+          </div>
 
-</div>
+          <div class="card">
+            <div class="step__num">2</div>
+            <h3>Permissions</h3>
+            <p>Allow the script to execute.</p>
+            <div class="cmd">
+              <code id="cmd-chmod">chmod +x ClaudeCode-Installation.sh</code>
+              <button class="icon-btn" type="button" data-copy="#cmd-chmod">
+                Copy <span aria-hidden="true">⎘</span>
+              </button>
+            </div>
+          </div>
 
-<script>
-function copyText(id) {
-    const text = document.getElementById(id).innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        alert("Copied: " + text);
-    });
-}
-</script>
+          <div class="card">
+            <div class="step__num">3</div>
+            <h3>Run</h3>
+            <p>Start the installation process.</p>
+            <div class="cmd">
+              <code id="cmd-run">./ClaudeCode-Installation.sh</code>
+              <button class="icon-btn" type="button" data-copy="#cmd-run">
+                Copy <span aria-hidden="true">⎘</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
 
+      <section class="section" id="commands" aria-label="One-liner install">
+        <h2>One-liner</h2>
+        <p>
+          Prefer a single command? Choose a method and copy it. This will
+          download and run the script.
+        </p>
+
+        <div class="panel" style="padding: 16px;">
+          <div class="seg" role="group" aria-label="One-liner method">
+            <button type="button" id="method-curl" aria-pressed="true">curl</button>
+            <button type="button" id="method-wget" aria-pressed="false">wget</button>
+          </div>
+
+          <div class="cmd" style="margin-top: 12px;">
+            <code id="cmd-oneliner">curl -sSL https://iupc-setup.vercel.app/ClaudeCode-Installation.sh | bash</code>
+            <button class="icon-btn" type="button" data-copy="#cmd-oneliner">
+              Copy <span aria-hidden="true">⎘</span>
+            </button>
+          </div>
+          <p style="margin: 12px 0 0; color: var(--faint); font-size: 13px;">
+            Tip: If you’re cautious, download first and inspect the script
+            before running it.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="faq" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <p>Quick answers to common questions.</p>
+
+        <div class="faq">
+          <details>
+            <summary>
+              What does this script do?
+              <span class="chev" aria-hidden="true">▾</span>
+            </summary>
+            <p>
+              It automates the setup process for Claude Code on a Linux machine.
+              Use the 3-step install or the one-liner.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Is it really offline?
+              <span class="chev" aria-hidden="true">▾</span>
+            </summary>
+            <p>
+              The flow is offline-friendly in the sense that it’s a single
+              script you can download and reuse. If the script downloads
+              dependencies, you’ll still need network access for those parts.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Copy buttons don’t work?
+              <span class="chev" aria-hidden="true">▾</span>
+            </summary>
+            <p>
+              Some browsers block clipboard access on file:// pages. Serve the
+              page (or open it over http/https) and try again.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <footer>
+        <div>
+          Download link: <a href="ClaudeCode-Installation.sh" download><code>ClaudeCode-Installation.sh</code></a>
+        </div>
+        <div style="margin-top: 6px;">
+          Theme inspired by the Claude Code aesthetic: clean, dark, and focused.
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+    <span class="toast__dot" aria-hidden="true"></span>
+    <span id="toastMsg">Copied</span>
+  </div>
+
+  <script>
+    const ONE_LINERS = {
+      curl: "curl -sSL https://iupc-setup.vercel.app/ClaudeCode-Installation.sh | bash",
+      wget: "wget -qO- https://iupc-setup.vercel.app/ClaudeCode-Installation.sh | bash",
+    };
+
+    function getTextFromSelector(selector) {
+      const el = document.querySelector(selector);
+      if (!el) return "";
+      const v = el.dataset && el.dataset.copyValue ? el.dataset.copyValue : el.textContent;
+      return String(v || "").trim();
+    }
+
+    async function copyToClipboard(text) {
+      const clean = String(text || "").trim();
+      if (!clean) return { ok: false, reason: "Empty text" };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(clean);
+          return { ok: true };
+        } catch (err) {
+          // fall through to legacy method
+        }
+      }
+
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = clean;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.top = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        return ok ? { ok: true } : { ok: false, reason: "Copy failed" };
+      } catch (err) {
+        return { ok: false, reason: "Copy failed" };
+      }
+    }
+
+    let toastTimer = null;
+    function toast(message, ok = true) {
+      const t = document.getElementById("toast");
+      const msg = document.getElementById("toastMsg");
+      if (!t || !msg) return;
+      msg.textContent = message;
+      t.querySelector(".toast__dot").style.background = ok ? "var(--accent-3)" : "rgba(239, 68, 68, 0.9)";
+
+      t.dataset.show = "true";
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => {
+        t.dataset.show = "false";
+      }, 1400);
+    }
+
+    function safeGet(key) {
+      try {
+        return localStorage.getItem(key);
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function safeSet(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (err) {
+        // ignore
+      }
+    }
+
+    function setMethod(method) {
+      const m = method === "wget" ? "wget" : "curl";
+      safeSet("oneLinerMethod", m);
+      document.getElementById("method-curl").setAttribute("aria-pressed", String(m === "curl"));
+      document.getElementById("method-wget").setAttribute("aria-pressed", String(m === "wget"));
+      const value = ONE_LINERS[m];
+      const cmd = document.getElementById("cmd-oneliner");
+      const hero = document.getElementById("oneLiner");
+      cmd.textContent = value;
+      hero.textContent = value;
+      cmd.dataset.copyValue = value;
+      hero.dataset.copyValue = value;
+    }
+
+    function prefersReducedMotion() {
+      return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    function typeInto(el, fullText) {
+      if (!el) return;
+      if (prefersReducedMotion()) {
+        el.textContent = fullText;
+        return;
+      }
+      const text = String(fullText);
+      el.textContent = "";
+      let i = 0;
+      const tick = () => {
+        i += 1;
+        el.textContent = text.slice(0, i);
+        if (i < text.length) window.requestAnimationFrame(tick);
+      };
+      window.requestAnimationFrame(tick);
+    }
+
+    function init() {
+      const initial = safeGet("oneLinerMethod") || "curl";
+      setMethod(initial);
+
+      const topbar = document.querySelector(".topbar");
+      const menuBtn = document.getElementById("menuBtn");
+      const topNav = document.getElementById("topNav");
+      const closeMenu = () => {
+        if (!topbar || !menuBtn) return;
+        topbar.dataset.menu = "closed";
+        menuBtn.setAttribute("aria-expanded", "false");
+      };
+      const toggleMenu = () => {
+        if (!topbar || !menuBtn) return;
+        const open = topbar.dataset.menu === "open";
+        topbar.dataset.menu = open ? "closed" : "open";
+        menuBtn.setAttribute("aria-expanded", String(!open));
+      };
+
+      if (menuBtn) menuBtn.addEventListener("click", toggleMenu);
+      if (topNav) {
+        topNav.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeMenu));
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMenu();
+      });
+
+      document.getElementById("method-curl").addEventListener("click", () => setMethod("curl"));
+      document.getElementById("method-wget").addEventListener("click", () => setMethod("wget"));
+
+      document.querySelectorAll("[data-copy]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const selector = btn.getAttribute("data-copy");
+          const text = getTextFromSelector(selector);
+          const res = await copyToClipboard(text);
+          if (res.ok) toast("Copied to clipboard");
+          else toast("Copy failed (try https)", false);
+        });
+      });
+
+      document.getElementById("copyPrimary").addEventListener("click", async () => {
+        const el = document.getElementById("cmd-oneliner");
+        const text = el.dataset.copyValue || el.textContent;
+        const res = await copyToClipboard(text);
+        if (res.ok) toast("Copied one-liner");
+        else toast("Copy failed (try https)", false);
+      });
+
+      const el = document.getElementById("oneLiner");
+      typeInto(el, el.dataset.copyValue || el.textContent);
+    }
+
+    init();
+  </script>
 </body>
 </html>
-
