@@ -92,22 +92,26 @@
     </a>
 
     <!-- Commands -->
+    <p>Step 1 : Download From Terminal</p>
     <div class="cmd-box">
         <code id="cmd1">wget https://iupc-setup.vercel.app/ClaudeCode-Installation.sh</code>
         <button onclick="copyText('cmd1')">Copy</button>
     </div>
-
+    
+    <p>Step 2 : Give execute permission</p>
     <div class="cmd-box">
         <code id="cmd2">chmod +x ClaudeCode-Installation.sh</code>
         <button onclick="copyText('cmd2')">Copy</button>
     </div>
 
+    <p>Step 3 : Start installation</p>
     <div class="cmd-box">
         <code id="cmd3">./ClaudeCode-Installation.sh</code>
         <button onclick="copyText('cmd3')">Copy</button>
     </div>
 
     <!-- One-liner -->
+    <p>You can Directly paste it into terminal. It will automatically download and install required files</p>
     <div class="cmd-box">
         <code id="cmd4">curl -sSL https://iupc-setup.vercel.app/ClaudeCode-Installation.sh | bash</code>
         <button onclick="copyText('cmd4')">Copy</button>
