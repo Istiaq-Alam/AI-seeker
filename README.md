@@ -1,4 +1,4 @@
-# NeuronHub
+# AiSeeker
 
 An all-in-one AI resource hub: scripts, setups, and a simple static website you can host (or open locally) to share your AI environment tooling.
 
